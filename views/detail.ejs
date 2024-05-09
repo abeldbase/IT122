@@ -1,0 +1,54 @@
+<!-- detail.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Details</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-top: 50px;
+      }
+      .details {
+        width: 80%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      p {
+        margin: 10px 0;
+      }
+      a {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #007bff;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Employee Details</h1>
+    <div class="details">
+      <p>Name: <%= employee.name %></p>
+      <p>Age: <%= employee.age %></p>
+      <p>Job Title: <%= employee.jobTitle %></p>
+      <p>Department: <%= employee.department %></p>
+      <p>Salary: <%= employee.salary %></p>
+    </div>
+    <a href="/">Back to Home</a>
+  </body>
+</html>

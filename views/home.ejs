@@ -1,0 +1,23 @@
+<!-- home.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+  </head>
+  <body>
+    <h1>Welcome to Our Company</h1>
+    <p>Explore our employees:</p>
+    <ul>
+      <% employees.forEach(employee => { %>
+      <li>
+        <a href="/detail?id=<%= employee.id %>">
+          <%= employee.name %> - <%= employee.id %>
+        </a>
+      </li>
+      <% }); %>
+    </ul>
+  </body>
+</html>

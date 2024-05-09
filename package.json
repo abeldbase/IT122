@@ -1,19 +1,15 @@
 {
-    "name": "IT122",
-    "version": "1.0.0",
-    "description": "Node.js web server for IT122 class students",
-    "main": "index.js",
-    "scripts": {
-      "start": "node index.js"
-    },
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/abeldbase/IT122.git"
-    },
-    "author": "Abel Mengstu",
-    "license": "ISC",
-    "dependencies": {
-      "node": "^16.13.0"
-    }
+  "name": "my-express-app",
+  "version": "1.0.0",
+  "description": "A simple Express application",
+  "main": "index.js",
+  "type": "module", 
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1"
   }
-  
+}
+
