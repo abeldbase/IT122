@@ -1,23 +1,98 @@
-<!-- home.ejs -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <title>Cars Details</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .content {
+        flex: 1;
+      }
+      .footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 20px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+      /* Rest of the styles remain unchanged */
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-top: 50px;
+      }
+      .details {
+        flex: 1;
+        width: 80%;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      p {
+        margin: 10px 0;
+      }
+      a {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #007bff;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .header-menu {
+        list-style-type: none;
+        padding: 0;
+        margin: 20px 0;
+        text-align: center;
+      }
+      .header-menu li {
+        display: inline-block;
+        margin: 0 10px;
+      }
+      .header-menu li:hover {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
-    <h1>Welcome to Our Company</h1>
-    <p>Explore our employees:</p>
-    <ul>
-      <% employees.forEach(employee => { %>
-      <li>
-        <a href="/detail?id=<%= employee.id %>">
-          <%= employee.name %> - <%= employee.id %>
-        </a>
-      </li>
-      <% }); %>
-    </ul>
+    <div class="content">
+      <ul class="header-menu">
+        <li>View car details</li>
+        <li>Add new car</li>
+        <li>Edit existing car information</li>
+        <li>Delete car</li>
+      </ul>
+      <h1>Welcome to Our Company</h1>
+      <p>Explore our cars:</p>
+      <ul>
+        <% cars.forEach(car => { %>
+        <li>
+          <a href="/detail?id=<%= car.id %>">
+            <%= car.brand %> - <%= car.id %>
+          </a>
+        </li>
+        <% }); %>
+      </ul>
+    </div>
+
+    <footer class="footer">
+      &copy; 2024 car inventory System
+    </footer>
   </body>
 </html>
