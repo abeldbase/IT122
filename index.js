@@ -1,58 +1,45 @@
-'use strict'
-
+// Importing modules using ES module syntax
 import express from 'express';
-import hbs from "hbs"
-import { Car } from "./models/car.js";
+import cors from 'cors';
+import { Car } from './models/car.js';
 
 const app = express();
 
-app.set("port", process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3000);
 app.use(express.static('./public')); // allows direct navigation to static files
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(express.json()); // Used to parse JSON bodies
 
-import cors from 'cors';
 app.use(cors()); // Enable CORS for all routes
 
-app.set("view engine", "hbs");
+app.set('view engine', 'ejs'); // Set view engine to EJS
 
 // Web routes
-app.get('/', (req, res, next) => {
-    Car.find({}).lean()
-        .then((cars) => {
-            res.render('home', { cars });
-        })
-        .catch(err => next(err));
+app.get('/', async (req, res, next) => {
+    try {
+        const cars = await Car.find().lean();
+        res.render('home', { cars });
+    } catch (err) {
+        next(err);
+    }
 });
 
-app.get('/about', (req, res) => {
-    res.type('text/html');
-    res.render('about');
-});
-
-app.get('/detail', (req, res, next) => {
-    Car.findOne({ title: req.query.title }).lean()
-        .then((car) => {
-            res.render('details', { result: car });
-        })
-        .catch(err => next(err));
-});
-
-app.post('/detail', (req, res, next) => {
-    Car.findOne({ title: req.body.title }).lean()
-        .then((car) => {
-            res.render('details', { result: car });
-        })
-        .catch(err => next(err));
+app.get('/detail', async (req, res, next) => {
+    try {
+        const car = await Car.findOne({ _id: req.query.id }).lean();
+        res.render('details', { result: car });
+    } catch (err) {
+        next(err);
+    }
 });
 
 app.get('/delete', async (req, res, next) => {
     try {
-        const result = await Car.deleteOne({ title: req.query.title });
-        let deleted = result.deletedCount !== 0; // deletedCount will be 0 if no docs deleted
+        const result = await Car.deleteOne({ model: req.query.model });
+        let deleted = result.deletedCount !== 0;
         const total = await Car.countDocuments();
         res.type('text/html');
-        res.render('delete', { title: req.query.title, deleted: deleted, total: total });
+        res.render('delete', { model: req.query.model, deleted, total });
     } catch (err) {
         next(err);
     }
@@ -63,7 +50,7 @@ app.get('/delete', async (req, res, next) => {
 // Get all items
 app.get('/api/cars', async (req, res) => {
     try {
-        const cars = await Car.find({}).lean();
+        const cars = await Car.find().lean();
         res.json(cars);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch cars' });
@@ -98,14 +85,13 @@ app.delete('/api/cars/:id', async (req, res) => {
     }
 });
 
-// Add or update one or more  item
+// Add or update one or more item
 app.post('/api/cars', async (req, res) => {
     const { id, brand, model, year, color } = req.body;
 
     // Check if the request body contains an array of cars
     if (Array.isArray(req.body)) {
         try {
-            // Insert multiple cars
             const result = await Car.insertMany(req.body);
             res.json(result);
         } catch (err) {
@@ -119,12 +105,11 @@ app.post('/api/cars', async (req, res) => {
 
         try {
             let car;
+
             if (id) {
-                // Update existing car if ID is provided
                 car = await Car.findByIdAndUpdate(id, { brand, model, year, color }, { new: true, upsert: true }).lean();
             } else {
-                // Add new car if no ID is provided
-                car = new Car({ brand, model, year, color });
+                car = new Car({ _id: Math.floor((Math.random() * 1000000)), brand, model, year, color });
                 await car.save();
             }
             res.json(car);
@@ -134,7 +119,6 @@ app.post('/api/cars', async (req, res) => {
     }
 });
 
-
 // Error handling
 app.use((req, res) => {
     res.type('text/plain');
@@ -143,5 +127,5 @@ app.use((req, res) => {
 });
 
 app.listen(app.get('port'), () => {
-    console.log('Express started');    
+    console.log('Express started');
 });
