@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -10,8 +11,6 @@
   <!-- Don't use this in production: -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  {{!--
-  <link rel="stylesheet" href="/public/main.css"> --}}
   <style>
     body {
       margin: 0;
@@ -40,7 +39,6 @@
       width: 100%;
     }
 
-    /* Welcome heading */
     h1 {
       color: #333;
       text-align: center;
@@ -106,38 +104,125 @@
     ul li a:hover {
       color: #007BFF;
     }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .form-actions {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .form-actions button {
+      margin: 0 5px;
+      padding: 10px 20px;
+      font-size: 1em;
+    }
+
   </style>
 </head>
 
 <body>
   <div id="root"></div>
+  <script>
+    window.__INITIAL_DATA__ = {{{json cars}}};
+  </script>
   <script type="text/babel">
 
-    const CarHome = () => {
+    const Detail = ({ car, onChange, onSave, onClear }) => {
+      if (!car) return <div>Please select a car to view details.</div>;
 
-      return (<div className="carHome"><div className="content">
-        <ul className="header-menu">
-          <li><a href="/">Home</a></li>
-          <li>Add new car</li>
-          <li>Edit existing car information</li>
-          <li>Delete car</li>
-        </ul>
-        <h1>Welcome to Our Company</h1>
-        <p>Explore our cars:</p>
-        <ul>
-          {{#each cars}}
-          <li>
-            <a href="/detail?id={{this._id}}">
-              {{ this.brand }} - {{ this.model }}
-            </a>
-          </li>
-          {{/ each}}
-        </ul>
-      </div>
-        <footer className="footer">
-          &copy; 2024 car inventory System
-        </footer></div>)
-    }
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        onChange({ ...car, [name]: value });
+      };
+
+      return (
+        <div className="detail">
+          <h2>Edit Car Details</h2>
+          <div className="form-group">
+            <label>Brand</label>
+            <input type="text" name="brand" value={car.brand} onChange={handleChange} />
+          </div>
+          <div className="form-group">
+            <label>Model</label>
+            <input type="text" name="model" value={car.model} onChange={handleChange} />
+          </div>
+          <div className="form-group">
+            <label>Year</label>
+            <input type="text" name="year" value={car.year} onChange={handleChange} />
+          </div>
+          <div className="form-group">
+            <label>Color</label>
+            <input type="text" name="color" value={car.color} onChange={handleChange} />
+          </div>
+          <div className="form-actions">
+            <button onClick={onSave}>Save</button>
+            <button onClick={onClear}>Clear</button>
+          </div>
+        </div>
+      );
+    };
+
+    const CarHome = () => {
+      const [cars, setCars] = React.useState(window.__INITIAL_DATA__);
+      const [selectedCar, setSelectedCar] = React.useState(null);
+
+      const handleSelectCar = (car) => {
+        setSelectedCar(car);
+      };
+
+      const handleChangeCar = (updatedCar) => {
+        setSelectedCar(updatedCar);
+      };
+
+      const handleSaveCar = () => {
+        setCars(cars.map(car => car._id === selectedCar._id ? selectedCar : car));
+        setSelectedCar(null);
+      };
+
+      const handleClearCar = () => {
+        setSelectedCar(null);
+      };
+
+      return (
+        <div className="carHome">
+          <div className="content">
+            <ul className="header-menu">
+              <li><a href="/">Home</a></li>
+              <li>Add new car</li>
+              <li>Edit existing car information</li>
+              <li>Delete car</li>
+            </ul>
+            <h1>Welcome to Our Company</h1>
+            <p>Explore our cars:</p>
+            <ul>
+              {cars.map(car => (
+                <li key={car._id} onClick={() => handleSelectCar(car)}>
+                  <a href="#">{car.brand} - {car.model}</a>
+                </li>
+              ))}
+            </ul>
+            <Detail car={selectedCar} onChange={handleChangeCar} onSave={handleSaveCar} onClear={handleClearCar} />
+          </div>
+          <footer className="footer">
+            &copy; 2024 Car Inventory System
+          </footer>
+        </div>
+      );
+    };
 
     ReactDOM.render(
       <CarHome />,
