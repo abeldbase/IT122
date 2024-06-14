@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import express from 'express';
 import hbs from "hbs";
@@ -52,61 +52,80 @@ app.post('/detail', (req, res, next) => {
 });
 
 // API routes
-app.get('/api/v1/cars', (req, res, next) => {
-    Car.find({}).lean()
-        .then((cars) => {
-            if (cars) {
-                res.json(cars);
-            } else {
-                return res.status(404).send('Not Found');
-            }
-        })
-        .catch(err => next(err));
+app.get('/api/cars', async (req, res) => {
+    try {
+        const cars = await Car.find({}).lean();
+        res.json(cars);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch cars' });
+    }
 });
 
-app.get('/api/v1/cars/:id', (req, res, next) => {
-    Car.findOne({ _id: req.params.id }).lean()
-        .then((car) => {
-            if (car) {
-                res.json(car);
-            } else {
-                return res.status(404).send('Not Found');
-            }
-        })
-        .catch(err => next(err));
+app.get('/api/cars/:id', async (req, res) => {
+    try {
+        const car = await Car.findById(req.params.id).lean();
+        if (car) {
+            res.json(car);
+        } else {
+            res.status(404).json({ error: 'Car not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch car' });
+    }
 });
 
-app.post('/api/v1/cars', (req, res, next) => {
-    Car.updateOne({ _id: req.body._id }, req.body, { upsert: true })
-        .then((result) => {
-            res.json({ updated: result.nModified });
-        })
-        .catch(err => next(err));
+app.post('/api/cars', async (req, res) => {
+    try {
+        const car = new Car(req.body);
+        await car.save();
+        res.json(car);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to add car' });
+    }
 });
 
-app.delete('/api/v1/cars/:id', (req, res, next) => {
-    Car.deleteOne({ _id: req.params.id })
-        .then((result) => {
-            res.json({ deleted: result.deletedCount });
-        })
-        .catch(err => next(err));
+app.put('/api/cars/:id', async (req, res) => {
+    try {
+        const car = await Car.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (car) {
+            res.json(car);
+        } else {
+            res.status(404).json({ error: 'Car not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to update car' });
+    }
 });
 
-// 404 handler
+app.delete('/api/cars/:id', async (req, res) => {
+    try {
+        const result = await Car.findByIdAndDelete(req.params.id);
+        if (result) {
+            res.json({ message: 'Car deleted' });
+        } else {
+            res.status(404).json({ error: 'Car not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete car' });
+    }
+});
+
+// Error handling middleware
 app.use((req, res) => {
     res.type('text/plain');
     res.status(404);
     res.send('404 - Not found');
 });
 
-// 500 handler
 app.use((err, req, res, next) => {
-    console.error(err);
+    console.error(err.stack);
     res.type('text/plain');
     res.status(500);
     res.send('500 - Server Error');
 });
 
 app.listen(app.get('port'), () => {
-    console.log('Express started');
+    console.log('Express started on port', app.get('port'));
 });
+
+    
