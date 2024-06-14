@@ -1,100 +1,188 @@
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brand Details</title>
+    <title>Car Details</title>
     <link rel="stylesheet" href="/public/main.css">
-      <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-      .content {
-        flex: 1;
-        padding: 20px;
-        max-width: 800px;
-        margin: 0 auto;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
+        .content {
+            flex: 1;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
 
-      .footer {
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        padding: 20px 0;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-      }
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
 
-      h2 {
-        color: #333;
-        text-align: center;
-        margin-top: 50px;
-        font-size: 2em;
-      }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-top: 50px;
+            font-size: 2em;
+        }
 
-      li {
-        list-style-type: none;
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
-        text-align: center;
-      }
+        li {
+            list-style-type: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+        }
 
-      li:hover {
-        transform: scale(1.02);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      }
+        li:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
 
-      a {
-        display: block;
-        text-align: center;
-        margin-top: 20px;
-        text-decoration: none;
-        color: #007BFF;
-        font-size: 1.1em;
-      }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 1.1em;
+        }
 
-      a:hover {
-        text-decoration: underline;
-        color: #0056b3;
-      }
+        a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
 
-      p {
-        margin: 10px 0;
-        text-align: center;
-        font-size: 1.2em;
-      }
+        p {
+            margin: 10px 0;
+            text-align: center;
+            font-size: 1.2em;
+        }
 
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .save-button {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: #fff;
+        }
     </style>
 </head>
-    <body>
-        <a href="/">Home</a>
-{{#if result}}
-    <h2>{{brand}} details</h2>
-    <li>Model: {{result.model}}</li>
-    <li>Production. year: {{result.year}}</li>
-     <li>Color: {{result.color}}</li>
-    <p>
-    <a href="/delete?brand={{result.brand}}">Delete</a>
-    </p>
-{{else}}
+<body>
+    <a href="/">Home</a>
+    {{#if result}}
+        <div class="content">
+            <h2>{{result.model}} Details</h2>
+            <ul>
+                <li>Model: {{result.model}}</li>
+                <li>Production Year: {{result.year}}</li>
+                <li>Color: {{result.color}}</li>
+            </ul>
+            <div class="buttons">
+                <button class="save-button" onclick="saveCar()">Save</button>
+                <button class="delete-button" onclick="deleteCar()">Delete</button>
+            </div>
+        </div>
+    {{else}}
         <h2>{{brand}} not found</h2>
-{{/if}}
-<footer class="footer">
-      &copy; 2024 car inventory System
+    {{/if}}
+    <footer class="footer">
+        &copy; 2024 Car Inventory System
     </footer>
-    </body>
+
+    <script>
+        function saveCar() {
+            // Assuming you have access to the car ID
+            const carId = '{{result._id}}'; // Replace this with the actual ID of the car
+
+            // Example AJAX request using Fetch API
+            fetch(`/api/cars/${carId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    // Assuming you have form fields with IDs for each property
+                    model: '{{result.model}}', // Replace this with the actual value
+                    year: '{{result.year}}', // Replace this with the actual value
+                    color: '{{result.color}}' // Replace this with the actual value
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Car details saved successfully');
+                    // You can optionally update the UI or perform any other actions
+                } else {
+                    alert('Failed to save car details');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving car details:', error);
+                alert('An error occurred while saving car details');
+            });
+        }
+
+        function deleteCar() {
+            // Assuming you have access to the car ID
+            const carId = '{{result._id}}'; // Replace this with the actual ID of the car
+
+            const confirmed = confirm('Are you sure you want to delete this car?');
+            if (confirmed) {
+                // Example AJAX request using Fetch API
+                fetch(`/api/cars/${carId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Car deleted successfully');
+                        // You can optionally update the UI or perform any other actions
+                    } else {
+                        alert('Failed to delete car');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting car:', error);
+                    alert('An error occurred while deleting car');
+                });
+            }
+        }
+    </script>
+</body>
 </html>
+
